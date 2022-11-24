@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Winter.Backend.GrpcServices;
 
 namespace Winter.Backend.Extensions;
 
@@ -24,12 +25,14 @@ public static class HostingExtensions
         });
     }
 
-    public static void ConfigureDependencies(this IServiceCollection services, IConfiguration config)
+    public static void ConfigureDependencies(this IServiceCollection services, IConfiguration _)
     {
-
+        services.AddGrpc();
     }
 
-    public static void ConfigurePipeline(this WebApplication app, IConfiguration config)
+    public static void ConfigurePipeline(this WebApplication app, IConfiguration _)
     {
+        app.UseRouting();
+        app.MapGrpcService<TraceService>();
     }
 }
