@@ -11,11 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf ProtoRoot="../vendors/otlp" Include="../vendors/otlp/opentelemetry/proto/common/v1/common.proto" GrpcServices="Server" />
-    <Protobuf ProtoRoot="../vendors/otlp" Include="../vendors/otlp/opentelemetry/proto/resource/v1/resource.proto" GrpcServices="Server" />
-    <Protobuf ProtoRoot="../vendors/otlp" Include="../vendors/otlp/opentelemetry/proto/metrics/v1/metrics.proto" GrpcServices="Server" />
-    <Protobuf ProtoRoot="../vendors/otlp" Include="../vendors/otlp/opentelemetry/proto/collector/metrics/v1/metrics_service.proto" GrpcServices="Server" />
-
+    <Protobuf ProtoRoot="../vendors/otlp" Include="../vendors/otlp/opentelemetry/proto/**/*.proto" GrpcServices="Server" />
   </ItemGroup>
 
 </Project>
