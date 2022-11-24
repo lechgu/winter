@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf ProtoRoot="../vendors/otlp" Include="opentelemetry/proto/**/*.proto" GrpcServices="Server" />
+    <Protobuf ProtoRoot="../vendors/otlp" Include="opentelemetry/proto/**/**/*.proto" GrpcServices="Server" />
   </ItemGroup>
 
 </Project>
