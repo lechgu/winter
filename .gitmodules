@@ -1,0 +1,6 @@
+[submodule "opentelemetry"]
+	path = opentelemetry
+	url = git@github.com:open-telemetry/opentelemetry-proto.git
+[submodule "vendors/otlp"]
+	path = vendors/otlp
+	url = git@github.com:open-telemetry/opentelemetry-proto.git
