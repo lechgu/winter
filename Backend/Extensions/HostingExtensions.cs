@@ -34,5 +34,7 @@ public static class HostingExtensions
     {
         app.UseRouting();
         app.MapGrpcService<TraceService>();
+        app.MapGrpcService<LogsService>();
+        app.MapGrpcService<MetricsService>();
     }
 }
