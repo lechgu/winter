@@ -70,23 +70,22 @@ var providerBuilder = Sdk.CreateMeterProviderBuilder()
 .AddConsoleExporter();
 
 
-var counter = meter.CreateCounter<int>("counter", "Seconds", "measure seconds");
-
-// var gauge = meter.CreateObservableGauge("gauge", () =>
-//                 {
-//                     return new List<Measurement<int>>()
-//                     {
-//                         new Measurement<int>(
-//                             DateTime.UtcNow.Second)
-//                     };
-//                 });
+// var counter = meter.CreateCounter<int>("counter", "Seconds", "measure seconds");
+var gauge = meter.CreateObservableGauge("gauge", () =>
+                {
+                    return new List<Measurement<int>>()
+                    {
+                        new Measurement<int>(
+                            DateTime.UtcNow.Second)
+                    };
+                });
 
 using var provider = providerBuilder.Build();
 
 System.Console.WriteLine("Press any key to exit.");
 while (!Console.KeyAvailable)
 {
-    counter.Add(1);
+    // counter.Add(1);
     provider.ForceFlush();
     Task.Delay(1000).Wait();
 }
