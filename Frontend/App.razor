@@ -1,1 +1,16 @@
-﻿<h1>App</h1>
+﻿@using Frontend.Features.Layout
+<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" />
+    </Found>
+    <NotFound>
+        <PageTitle>Not found</PageTitle>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <HxAlert Color="ThemeColor.Danger">
+                <h4 class="alert-heading">Not Found</h4>
+                <HxIcon Icon="@BootstrapIcon.ExclamationTriangleFill" /> Sorry, there's nothing at this address.
+            </HxAlert>
+        </LayoutView>
+    </NotFound>
+</Router>
