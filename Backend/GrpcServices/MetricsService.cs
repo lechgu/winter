@@ -10,6 +10,7 @@ public class MetricsService : MetricsServiceBase
     public override Task<ExportMetricsServiceResponse> Export(ExportMetricsServiceRequest request, ServerCallContext context)
     {
         Console.WriteLine(request.ToString());
-        return base.Export(request, context);
+        Console.Out.Flush();
+        return Task.FromResult(new ExportMetricsServiceResponse());
     }
 }
