@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Builder;
-using Winter.Host.Middleware;
+using Winter.Backend.Middleware;
 
-namespace Winter.Host.Extensions;
+namespace Winter.Backend.Extensions;
 
 public static class MiddlewareExtensions
 {

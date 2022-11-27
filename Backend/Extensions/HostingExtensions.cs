@@ -1,8 +1,11 @@
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Winter.Backend.Hubs;
+using Winter.Backend.Middleware;
 
 namespace Winter.Backend.Extensions;
 
@@ -28,8 +31,26 @@ public static class HostingExtensions
         services.AddSignalR();
     }
 
-    public static void ConfigurePipeline(this WebApplication app, IConfiguration _)
+    public static void ConfigurePipeline(this WebApplication app, IConfiguration config)
     {
+        app.UseNotFoundRetrier(new NotFoundRetrierOptions
+        {
+            When = (path) => !path.StartsWithSegments("/settings.json")
+        });
+        var staticDir = config["STATIC_DIR"];
+        if (!string.IsNullOrEmpty(staticDir) && Directory.Exists(staticDir))
+        {
+            var fileProvider = new PhysicalFileProvider(staticDir);
+            app.UseDefaultFiles(new DefaultFilesOptions
+            {
+                FileProvider = fileProvider
+            });
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                ServeUnknownFileTypes = true,
+                FileProvider = fileProvider
+            });
+        }
         app.UseRouting();
         app.UseCors(x =>
         {

@@ -3,6 +3,21 @@
 <h1>
     <HxIcon Icon="BootstrapIcon.Stopwatch" CssClass="me-1" />Metrics
 </h1>
-<div>@counter?.Scope</div>
-<div>@counter?.Name</div>
-<div>@counter?.Value</div>
+<div class="d-flex">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Scope</th>
+                <th scope="col">Name</th>
+                <th scope="col">Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@counter?.Scope</td>
+                <td>@counter?.Name</td>
+                <td>@counter?.Value</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

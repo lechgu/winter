@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 
-namespace Winter.Host.Middleware;
+namespace Winter.Backend.Middleware;
 
 public sealed class NotFoundRetrierOptions
 {
