@@ -62,21 +62,21 @@ var providerBuilder = Sdk.CreateMeterProviderBuilder()
 .AddMeter(meter.Name)
 .AddOtlpExporter(opts =>
 {
-    opts.Protocol = OtlpExportProtocol.Grpc;
-    opts.Endpoint = new Uri("http://localhost:8080");
-    opts.TimeoutMilliseconds = 100;
-    opts.ExportProcessorType = ExportProcessorType.Simple;
+    opts.Protocol = OtlpExportProtocol.HttpProtobuf;
+    opts.Endpoint = new Uri("http://localhost:8080/v1/metrics");
+    // opts.TimeoutMilliseconds = 100;
+    // opts.ExportProcessorType = ExportProcessorType.Simple;
 })
 .AddConsoleExporter();
 
 
-// var counter = meter.CreateCounter<int>("counter", "Seconds", "measure seconds");
-var gauge = meter.CreateObservableGauge("gauge", () =>
+var gauge = meter.CreateObservableGauge("NumberOfProcesses", () =>
                 {
                     return new List<Measurement<int>>()
                     {
                         new Measurement<int>(
-                            DateTime.UtcNow.Second)
+                            Process.GetProcesses().Length
+                            )
                     };
                 });
 
@@ -85,7 +85,6 @@ using var provider = providerBuilder.Build();
 System.Console.WriteLine("Press any key to exit.");
 while (!Console.KeyAvailable)
 {
-    // counter.Add(1);
     provider.ForceFlush();
     Task.Delay(1000).Wait();
 }

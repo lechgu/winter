@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Winter.Backend.GrpcServices;
+using Winter.Backend.Hubs;
 
 namespace Winter.Backend.Extensions;
 
@@ -18,23 +17,27 @@ public static class HostingExtensions
 
         builder.ConfigureKestrel(opts =>
         {
-            opts.ListenAnyIP(port, lo =>
-            {
-                lo.Protocols = HttpProtocols.Http2;
-            });
+            opts.ListenAnyIP(port);
         });
     }
 
     public static void ConfigureDependencies(this IServiceCollection services, IConfiguration _)
     {
-        services.AddGrpc();
+        services.AddCors();
+        services.AddControllers();
+        services.AddSignalR();
     }
 
     public static void ConfigurePipeline(this WebApplication app, IConfiguration _)
     {
         app.UseRouting();
-        app.MapGrpcService<TraceService>();
-        app.MapGrpcService<LogsService>();
-        app.MapGrpcService<MetricsService>();
+        app.UseCors(x =>
+        {
+            x.AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowAnyOrigin();
+        });
+        app.MapControllers();
+        app.MapHub<MetricsHub>("hubs/metrics");
     }
 }

@@ -11,7 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf ProtoRoot="../vendors/otlp" Include="../vendors/otlp/opentelemetry/proto/**/*.proto" GrpcServices="Server" />
+    <Protobuf ProtoRoot="../vendors/otlp" Include="../vendors/otlp/opentelemetry/proto/**/*.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
 </Project>

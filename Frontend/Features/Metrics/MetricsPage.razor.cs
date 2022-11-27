@@ -16,7 +16,11 @@ public partial class MetricsPage : ComponentBase
             .WithUrl(url)
             .WithAutomaticReconnect()
             .Build();
-        hubConnection.On<LongCounter>("Notify", counter => this.counter = counter);
+        hubConnection.On<LongCounter>("Notify", counter =>
+        {
+            this.counter = counter;
+            StateHasChanged();
+        });
         await hubConnection.StartAsync();
     }
 }
