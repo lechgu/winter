@@ -1,0 +1,7 @@
+version: '3.8'
+
+services:
+  winter:
+    build: .
+    ports:
+      - 4318:80
