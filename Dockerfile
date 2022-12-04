@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 RUN rm -rf Backend/bin Backend/obj
-RUN dotnet publish Backend -c release --self-contained -r linux-musl-x64 -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:PublishTrimmed=true
+RUN dotnet publish Backend -c release --self-contained -r linux-musl-x64 -p:PublishSingleFile=true -p:PublishReadyToRun=true
 
 RUN rm -rf Frontend/obj Frontend/bin Frontend/wwwroot/settings.json
 RUN dotnet publish Frontend -c Release
@@ -17,7 +17,8 @@ RUN apk add --no-cache icu-libs \
 COPY --from=build /app/Backend/bin/release/net7.0/linux-musl-x64/publish/Backend /usr/local/bin/winter
 COPY --from=build /app/Frontend/bin/Release/net7.0/publish/wwwroot/ /static/
 
-ENV PORT=80
+ENV HTTP1_PORT=80
+ENV HTTP2_PORT=90
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 ENV STATIC_DIR=/static
 ENV Logging__LogLevel__Microsoft=Information
