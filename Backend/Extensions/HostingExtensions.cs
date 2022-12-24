@@ -1,6 +1,8 @@
 using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -13,14 +15,15 @@ public static class HostingExtensions
 {
     public static void ConfigureHosting(this ConfigureWebHostBuilder builder, IConfiguration config)
     {
-        if (!int.TryParse(config["PORT"], out int port))
-        {
-            port = 80;
-        }
-
+        var (http1Port, http2Port) = GetPorts(config);
         builder.ConfigureKestrel(opts =>
         {
-            opts.ListenAnyIP(port);
+            opts
+            .ListenAnyIP(http1Port);
+            opts.ListenAnyIP(http2Port, lo =>
+            {
+                lo.Protocols = HttpProtocols.Http2;
+            });
         });
     }
 
@@ -58,7 +61,21 @@ public static class HostingExtensions
             .AllowAnyHeader()
             .AllowAnyOrigin();
         });
-        app.MapControllers();
+        var (http1Port, http2Port) = GetPorts(config);
+        app.MapControllers().RequireHost($"*:{http1Port}");
         app.MapHub<MetricsHub>("hubs/metrics");
+    }
+
+    public static (int, int) GetPorts(IConfiguration config)
+    {
+        if (!int.TryParse(config["HTTP1_PORT"], out int http1Port))
+        {
+            http1Port = 80;
+        }
+        if (!int.TryParse(config["HTTP2_PORT"], out int http2Port))
+        {
+            http2Port = 90;
+        }
+        return (http1Port, http2Port);
     }
 }
