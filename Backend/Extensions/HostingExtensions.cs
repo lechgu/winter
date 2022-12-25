@@ -1,11 +1,11 @@
 using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Winter.Backend.GrpcServices;
 using Winter.Backend.Hubs;
 using Winter.Backend.Middleware;
 
@@ -13,14 +13,16 @@ namespace Winter.Backend.Extensions;
 
 public static class HostingExtensions
 {
+    const int DEFAULT_OTLP_PORT = 4317;
+    const int DEFAULT_FRONTEND_PORT = 80;
     public static void ConfigureHosting(this ConfigureWebHostBuilder builder, IConfiguration config)
     {
-        var (http1Port, http2Port) = GetPorts(config);
+        var (otlpPort, frontendPort) = GetPorts(config);
         builder.ConfigureKestrel(opts =>
         {
             opts
-            .ListenAnyIP(http1Port);
-            opts.ListenAnyIP(http2Port, lo =>
+            .ListenAnyIP(frontendPort);
+            opts.ListenAnyIP(otlpPort, lo =>
             {
                 lo.Protocols = HttpProtocols.Http2;
             });
@@ -29,8 +31,7 @@ public static class HostingExtensions
 
     public static void ConfigureDependencies(this IServiceCollection services, IConfiguration _)
     {
-        services.AddCors();
-        services.AddControllers();
+        services.AddGrpc();
         services.AddSignalR();
     }
 
@@ -55,27 +56,21 @@ public static class HostingExtensions
             });
         }
         app.UseRouting();
-        app.UseCors(x =>
-        {
-            x.AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowAnyOrigin();
-        });
-        var (http1Port, http2Port) = GetPorts(config);
-        app.MapControllers().RequireHost($"*:{http1Port}");
+        app.MapGrpcService<MetricsService>();
+        app.MapGrpcService<LogsService>();
         app.MapHub<MetricsHub>("hubs/metrics");
     }
 
-    public static (int, int) GetPorts(IConfiguration config)
+    static (int, int) GetPorts(IConfiguration config)
     {
-        if (!int.TryParse(config["HTTP1_PORT"], out int http1Port))
+        if (!int.TryParse(config["OTLP_PORT"], out int otlpPort))
         {
-            http1Port = 80;
+            otlpPort = DEFAULT_OTLP_PORT;
         }
-        if (!int.TryParse(config["HTTP2_PORT"], out int http2Port))
+        if (!int.TryParse(config["FRONTEND_PORT"], out int frontendPort))
         {
-            http2Port = 90;
+            frontendPort = DEFAULT_FRONTEND_PORT;
         }
-        return (http1Port, http2Port);
+        return (otlpPort, frontendPort);
     }
 }

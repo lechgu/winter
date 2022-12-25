@@ -11,8 +11,8 @@ var providerBuilder = Sdk.CreateMeterProviderBuilder()
 .AddMeter(meter.Name)
 .AddOtlpExporter(opts =>
 {
-    opts.Protocol = OtlpExportProtocol.HttpProtobuf;
-    opts.Endpoint = new Uri("http://localhost:8080/v1/metrics");
+    opts.Protocol = OtlpExportProtocol.Grpc;
+    opts.Endpoint = new Uri("http://localhost:4317");
 
 });
 

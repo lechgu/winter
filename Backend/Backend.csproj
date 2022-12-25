@@ -12,7 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf ProtoRoot="../vendors/otlp" Include="../vendors/otlp/opentelemetry/proto/**/*.proto" />
+    <Protobuf ProtoRoot="../vendors/otlp" Include="../vendors/otlp/opentelemetry/proto/**/*.proto"
+      Services="Server" />
   </ItemGroup>
 
   <ItemGroup>
