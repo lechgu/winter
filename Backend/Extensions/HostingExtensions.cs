@@ -58,6 +58,7 @@ public static class HostingExtensions
         app.UseRouting();
         app.MapGrpcService<MetricsService>();
         app.MapGrpcService<LogsService>();
+        app.MapGrpcService<TraceService>();
         app.MapHub<MetricsHub>("hubs/metrics");
     }
 
