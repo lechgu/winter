@@ -17,8 +17,8 @@ RUN apk add --no-cache icu-libs \
 COPY --from=build /app/Backend/bin/release/net7.0/linux-musl-x64/publish/Backend /usr/local/bin/winter
 COPY --from=build /app/Frontend/bin/Release/net7.0/publish/wwwroot/ /static/
 
-ENV HTTP1_PORT=80
-ENV HTTP2_PORT=90
+ENV FRONTEND_PORT=80
+ENV OTLP_PORT=4317
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 ENV STATIC_DIR=/static
 ENV Logging__LogLevel__Microsoft=Information
