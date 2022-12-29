@@ -9,11 +9,11 @@ var meter = new Meter("TestMeter");
 
 var providerBuilder = Sdk.CreateMeterProviderBuilder()
 .AddMeter(meter.Name)
-.AddOtlpExporter(opts =>
+.AddOtlpExporter((opts, mopts) =>
 {
     opts.Protocol = OtlpExportProtocol.Grpc;
     opts.Endpoint = new Uri("http://localhost:4317");
-
+    mopts.PeriodicExportingMetricReaderOptions.ExportIntervalMilliseconds = 600;
 });
 
 var gauge = meter.CreateObservableGauge("NumberOfProcesses", () =>

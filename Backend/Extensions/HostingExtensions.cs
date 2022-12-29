@@ -31,6 +31,7 @@ public static class HostingExtensions
 
     public static void ConfigureDependencies(this IServiceCollection services, IConfiguration _)
     {
+        services.AddCors();
         services.AddGrpc();
         services.AddSignalR();
     }
@@ -56,6 +57,12 @@ public static class HostingExtensions
             });
         }
         app.UseRouting();
+        app.UseCors(x =>
+        {
+            x.AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowAnyOrigin();
+        });
         app.MapGrpcService<MetricsService>();
         app.MapGrpcService<LogsService>();
         app.MapGrpcService<TraceService>();

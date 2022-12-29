@@ -7,6 +7,12 @@
 
   <ItemGroup>
     <PackageReference Include="BlazorWasmAntivirusProtection" Version="2.3.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.21.12" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.50.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.51.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Havit.Blazor.Components.Web.Bootstrap" Version="3.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.0" PrivateAssets="all" />
@@ -15,6 +21,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Shared\Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf ProtoRoot="../vendors/otlp" Include="../vendors/otlp/opentelemetry/proto/**/*.proto" Services="Client" />
   </ItemGroup>
 
 </Project>
