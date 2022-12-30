@@ -40,22 +40,7 @@ public class MetricsService : MetricsServiceBase
             {
                 foreach (var m in sm.Metrics)
                 {
-                    NumberDataPoint? dp = null;
-
-                    Console.WriteLine(m);
-                    dp = m.Sum.DataPoints.FirstOrDefault();
-                    if (dp is not null)
-                    {
-                        var counter = new Counter
-                        {
-                            Resource = rm.Resource.Attributes.FirstOrDefault(x => x.Key == "service.name")?.Value?.StringValue ?? "??",
-                            Scope = sm.Scope.Name,
-                            Name = m.Name,
-                            Value = dp.AsInt,
-                            Timestamp = DateTimeOffset.UtcNow
-                        };
-                        counters.Add(counter);
-                    }
+                    var dp = m?.Sum?.DataPoints?.FirstOrDefault();
                     if (dp is not null)
                     {
                         var counter = new Counter
