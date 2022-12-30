@@ -1,9 +1,18 @@
 @page "/metrics"
+@using Winter.Shared.Dto
 
 <h1>
     <HxIcon Icon="BootstrapIcon.Stopwatch" CssClass="me-1" />Metrics
 </h1>
 <div class="d-flex">
-    <table class="table">
-    </table>
+    <HxGrid TItem="Counter" @ref="grid" Responsive="true" DataProvider="GetGridData" PageSize="10">
+        <Columns>
+            <HxGridColumn HeaderText="Timestamp" ItemTextSelector="@(item => item!.Timestamp.ToString())" />
+            <HxGridColumn HeaderText="Resource" ItemTextSelector="@(item => item?.Resource)" />
+            <HxGridColumn HeaderText="Scope" ItemTextSelector="@(item => item?.Scope)" />
+            <HxGridColumn HeaderText="Name" ItemTextSelector="@(item => item?.Name)" />
+            <HxGridColumn HeaderText="Value" ItemTextSelector="@(item => item!.Value.ToString())" />
+        </Columns>
+    </HxGrid>
+
 </div>
