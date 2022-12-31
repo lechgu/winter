@@ -6,17 +6,20 @@ using Winter.Shared.Dto;
 
 namespace Frontend.Features.Logs;
 
-public partial class LogsPage : ComponentBase
+public partial class LogsPage : ComponentBase, IAsyncDisposable
 {
     [Inject]
     SettingsProvider SettingsProvider { get; set; } = default!;
 
+    [Inject]
+    AppState AppState { get; set; } = default!;
+
     HxGrid<LogRecord> grid = default!;
-    readonly List<LogRecord> logRecordsCache = new();
 
     protected override async Task OnInitializedAsync()
     {
         Console.WriteLine("OnInitializedAsync");
+
         var settings = await SettingsProvider.GetSettingsAsync();
         var url = $"{settings.ServiceUrl}/hubs/logs";
         var hubConnection = new HubConnectionBuilder()
@@ -27,7 +30,7 @@ public partial class LogsPage : ComponentBase
         {
             foreach (var logRecord in logRecords)
             {
-                logRecordsCache.Add(logRecord);
+                AppState.AddLogRecord(logRecord);
                 await grid.RefreshDataAsync();
             }
         });
@@ -38,8 +41,14 @@ public partial class LogsPage : ComponentBase
     {
         return Task.FromResult(new GridDataProviderResult<LogRecord>
         {
-            Data = logRecordsCache,
-            TotalCount = logRecordsCache.Count
+            Data = AppState.LogRecords,
+            TotalCount = AppState.LogRecords.Count
         });
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Console.WriteLine("DisposeAsync");
+        return ValueTask.CompletedTask;
     }
 }

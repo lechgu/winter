@@ -7,15 +7,17 @@ using Winter.Shared.Dto;
 
 namespace Frontend.Features.Metrics;
 
-public record CounterDescription(string Resource, string Scope, string Name);
+
 
 public partial class MetricsPage : ComponentBase
 {
     [Inject]
     SettingsProvider SettingsProvider { get; set; } = default!;
 
+    [Inject]
+    AppState AppState { get; set; } = default!;
+
     HxGrid<Counter> grid = default!;
-    readonly Dictionary<CounterDescription, Counter> counterCache = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -29,8 +31,7 @@ public partial class MetricsPage : ComponentBase
         {
             foreach (var counter in counters)
             {
-                var desc = new CounterDescription(counter.Resource, counter.Scope, counter.Name);
-                counterCache[desc] = counter;
+                AppState.UpsertCounter(counter);
             }
             await grid.RefreshDataAsync();
         });
@@ -41,8 +42,8 @@ public partial class MetricsPage : ComponentBase
     {
         return Task.FromResult(new GridDataProviderResult<Counter>
         {
-            Data = counterCache.Values,
-            TotalCount = counterCache.Count
+            Data = AppState.Counters,
+            TotalCount = AppState.Counters.Count
         });
     }
 
