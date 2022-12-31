@@ -8,6 +8,7 @@ namespace Frontend.Features.Logs;
 
 public partial class LogsPage : ComponentBase, IAsyncDisposable
 {
+    HubConnection? hubConnection;
     [Inject]
     SettingsProvider SettingsProvider { get; set; } = default!;
 
@@ -18,23 +19,23 @@ public partial class LogsPage : ComponentBase, IAsyncDisposable
 
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("OnInitializedAsync");
-
-        var settings = await SettingsProvider.GetSettingsAsync();
-        var url = $"{settings.ServiceUrl}/hubs/logs";
-        var hubConnection = new HubConnectionBuilder()
-            .WithUrl(url)
-            .WithAutomaticReconnect()
-            .Build();
-        hubConnection.On<LogRecord[]>("Notify", async logRecords =>
+        if (hubConnection is null)
         {
-            foreach (var logRecord in logRecords)
+            var settings = await SettingsProvider.GetSettingsAsync();
+            var url = $"{settings.ServiceUrl}/hubs/logs";
+            var hubConnection = new HubConnectionBuilder()
+                .WithUrl(url)
+                .Build();
+            hubConnection.On<LogRecord[]>("Notify", async logRecords =>
             {
-                AppState.AddLogRecord(logRecord);
-                await grid.RefreshDataAsync();
-            }
-        });
-        await hubConnection.StartAsync();
+                foreach (var logRecord in logRecords)
+                {
+                    AppState.AddLogRecord(logRecord);
+                    await grid.RefreshDataAsync();
+                }
+            });
+            await hubConnection.StartAsync();
+        }
     }
 
     Task<GridDataProviderResult<LogRecord>> GetGridData(GridDataProviderRequest<LogRecord> request)
@@ -46,9 +47,11 @@ public partial class LogsPage : ComponentBase, IAsyncDisposable
         });
     }
 
-    public ValueTask DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
-        Console.WriteLine("DisposeAsync");
-        return ValueTask.CompletedTask;
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
     }
 }
