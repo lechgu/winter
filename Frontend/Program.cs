@@ -13,6 +13,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddHxServices();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddScoped<SettingsProvider>();
-builder.Services.AddSingleton<AppState>();
+builder.Services.AddScoped<AppState>();
+builder.Services.AddScoped<MegaHub>();
 
 await builder.Build().RunAsync();
