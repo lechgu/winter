@@ -67,6 +67,7 @@ public static class HostingExtensions
         app.MapGrpcService<LogsService>();
         app.MapGrpcService<TraceService>();
         app.MapHub<MetricsHub>("hubs/metrics");
+        app.MapHub<LogsHub>("hubs/logs");
     }
 
     static (int, int) GetPorts(IConfiguration config)

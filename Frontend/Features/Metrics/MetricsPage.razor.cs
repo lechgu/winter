@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net.Http;
 using Havit.Blazor.Components.Web.Bootstrap;
 using Microsoft.AspNetCore.Components;
@@ -13,13 +12,10 @@ public record CounterDescription(string Resource, string Scope, string Name);
 public partial class MetricsPage : ComponentBase
 {
     [Inject]
-    HttpClient HttpClient { get; set; } = default!;
-
-    [Inject]
     SettingsProvider SettingsProvider { get; set; } = default!;
 
     HxGrid<Counter> grid = default!;
-    Dictionary<CounterDescription, Counter> counterCache = new();
+    readonly Dictionary<CounterDescription, Counter> counterCache = new();
 
     protected override async Task OnInitializedAsync()
     {

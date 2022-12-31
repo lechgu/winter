@@ -47,7 +47,7 @@ public class MetricsService : MetricsServiceBase
                         {
                             Resource = rm.Resource.Attributes.FirstOrDefault(x => x.Key == "service.name")?.Value?.StringValue ?? "??",
                             Scope = sm.Scope.Name,
-                            Name = m.Name,
+                            Name = m?.Name ?? "??",
                             Value = dp.AsInt,
                             Timestamp = DateTimeOffset.UtcNow
                         };
