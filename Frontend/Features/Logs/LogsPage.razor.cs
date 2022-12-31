@@ -23,7 +23,7 @@ public partial class LogsPage : ComponentBase, IAsyncDisposable
         {
             var settings = await SettingsProvider.GetSettingsAsync();
             var url = $"{settings.ServiceUrl}/hubs/logs";
-            var hubConnection = new HubConnectionBuilder()
+            hubConnection = new HubConnectionBuilder()
                 .WithUrl(url)
                 .Build();
             hubConnection.On<LogRecord[]>("Notify", async logRecords =>
