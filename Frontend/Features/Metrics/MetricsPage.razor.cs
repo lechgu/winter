@@ -1,4 +1,3 @@
-using System.Net.Http;
 using Havit.Blazor.Components.Web.Bootstrap;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -12,30 +11,20 @@ namespace Frontend.Features.Metrics;
 public partial class MetricsPage : ComponentBase
 {
     [Inject]
-    SettingsProvider SettingsProvider { get; set; } = default!;
+    AppState AppState { get; set; } = default!;
 
     [Inject]
-    AppState AppState { get; set; } = default!;
+    MegaHub MegaHub { get; set; } = default!;
 
     HxGrid<Counter> grid = default!;
 
     protected override async Task OnInitializedAsync()
     {
-        var settings = await SettingsProvider.GetSettingsAsync();
-        var url = $"{settings.ServiceUrl}/hubs/metrics";
-        var hubConnection = new HubConnectionBuilder()
-            .WithUrl(url)
-            .WithAutomaticReconnect()
-            .Build();
-        hubConnection.On<Counter[]>("Notify", async counters =>
+        MegaHub.MetricsChanged += async () =>
         {
-            foreach (var counter in counters)
-            {
-                AppState.UpsertCounter(counter);
-            }
             await grid.RefreshDataAsync();
-        });
-        await hubConnection.StartAsync();
+        };
+        await MegaHub.ConnectAsync();
     }
 
     Task<GridDataProviderResult<Counter>> GetGridData(GridDataProviderRequest<Counter> request)

@@ -9,7 +9,9 @@ public class MegaHub
     private readonly SettingsProvider settingsProvider;
     bool connected = false;
     HubConnection? logsHub;
+    HubConnection? metricsHub;
     public event Action? LogsChanged;
+    public event Action? MetricsChanged;
 
     public MegaHub(AppState appState, SettingsProvider settingsProvider)
     {
@@ -25,6 +27,7 @@ public class MegaHub
             var logsUrl = $"{settings.ServiceUrl}/hubs/logs";
             logsHub = new HubConnectionBuilder()
                 .WithUrl(logsUrl)
+                .WithAutomaticReconnect()
                 .Build();
             logsHub.On<LogRecord[]>("Notify", logRecords =>
             {
@@ -36,6 +39,22 @@ public class MegaHub
             });
 
             await logsHub.StartAsync();
+
+            var metricsUrl = $"{settings.ServiceUrl}/hubs/metrics";
+            metricsHub = new HubConnectionBuilder()
+                .WithUrl(metricsUrl)
+                .WithAutomaticReconnect()
+                .Build();
+            metricsHub.On<Counter[]>("Notify", counters =>
+            {
+                foreach (var counter in counters)
+                {
+                    appState.UpsertCounter(counter);
+                }
+                MetricsChanged?.Invoke();
+            });
+            await metricsHub.StartAsync();
+
             connected = true;
         }
     }
